@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme>
+    <title>Liquid Glass</title>
+    <designer>Joshua</designer>
+    <author>Joshua</author>
+    <version>1.0.0</version>
+    <uiVersion>17</uiVersion>
+    <description>Translucent liquid-glass icons, an aurora lockscreen with a liquid charging orb, and violet vortex wallpapers. Built for Xiaomi 17 (1220x2656).</description>
+    <miuiAdapterVersion>8.2</miuiAdapterVersion>
+    <createTime>2026-10-24</createTime>
+</theme>

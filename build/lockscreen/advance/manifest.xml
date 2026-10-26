@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Liquid Glass lockscreen. Designed at 1220px width (Xiaomi 17, 1220x2656). -->
+<Lockscreen version="2" frameRate="60" screenWidth="1220" displayDesktop="false">
+  <VariableBinders>
+    <ContentProviderBinder name="weather" uri="content://weather/actualWeatherData/1"
+        columns="city_name,description,temperature,tmphighs,tmplows" countName="has_weather">
+      <Variable name="w_city" type="string" column="city_name"/>
+      <Variable name="w_desc" type="string" column="description"/>
+      <Variable name="w_temp" type="int" column="temperature"/>
+      <Variable name="w_high" type="int" column="tmphighs"/>
+      <Variable name="w_low" type="int" column="tmplows"/>
+    </ContentProviderBinder>
+  </VariableBinders>
+
+  <Var name="charging" expression="eq(#battery_state,1)+eq(#battery_state,3)"/>
+  <Var name="orb_cy" expression="#screen_height-678"/>
+  <Var name="drag" expression="0"/>
+  <Var name="start_y" expression="0"/>
+
+  <Wallpaper/>
+
+  <Group name="content" x="0" y="-#drag*0.35" alpha="max(0,255-#drag*0.6)">
+    <Image src="ic_lock.png" x="610" y="208" align="center" alignV="center"/>
+    <DateTime x="610" y="310" align="center" alignV="center" color="#FFFFFF" size="50" fontFamily="mipro-medium"
+        format="EEEE, d MMMM" shadowColor="#30000000" shadowDy="2"/>
+    <DateTime x="610" y="516" align="center" alignV="center" color="#FFFFFF" size="325" fontFamily="mipro-regular"
+        format="HH:mm" visibility="eq(#time_format,1)"/>
+    <DateTime x="610" y="516" align="center" alignV="center" color="#FFFFFF" size="325" fontFamily="mipro-regular"
+        format="h:mm" visibility="ne(#time_format,1)"/>
+
+    <!-- weather card -->
+    <Image src="card_weather.png" x="63" y="743"/>
+    <Image src="ic_weather.png" x="455" y="795"/>
+    <Group visibility="gt(#has_weather,0)">
+      <Text x="122" y="824" alignV="center" color="#FFFFFF" size="47" bold="true"
+          fontFamily="mipro-demibold" textExp="@w_city"/>
+      <Text x="122" y="885" alignV="center" color="#B8FFFFFF" size="44" textExp="@w_desc"/>
+      <Text x="115" y="1032" alignV="center" color="#FFFFFF" size="164" fontFamily="mipro-light"
+          format="%d°" paras="#w_temp"/>
+      <Text x="122" y="1176" alignV="center" color="#FFFFFF" size="39"
+          format="High %d°  Low %d°" paras="#w_high,#w_low"/>
+    </Group>
+    <Group visibility="eq(#has_weather,0)">
+      <Text x="122" y="824" alignV="center" color="#FFFFFF" size="47" bold="true" text="Weather"/>
+      <Text x="122" y="885" alignV="center" color="#B8FFFFFF" size="44" text="Unavailable"/>
+      <DateTime x="115" y="1032" alignV="center" color="#FFFFFF" size="164" fontFamily="mipro-light"
+          format="d"/>
+      <DateTime x="122" y="1176" alignV="center" color="#FFFFFF" size="39" format="EEEE"/>
+    </Group>
+
+    <!-- analog clock card -->
+    <Image src="card_clock.png" x="637" y="743"/>
+    <Image src="clock_face.png" x="682" y="784"/>
+    <Image src="hand_hour_shadow.png" x="682" y="789" pivotX="215" pivotY="215"
+        rotation="#hour12*30+#minute*0.5"/>
+    <Image src="hand_hour.png" x="682" y="784" pivotX="215" pivotY="215"
+        rotation="#hour12*30+#minute*0.5"/>
+    <Image src="hand_min_shadow.png" x="682" y="789" pivotX="215" pivotY="215"
+        rotation="#minute*6+#second*0.1"/>
+    <Image src="hand_min.png" x="682" y="784" pivotX="215" pivotY="215"
+        rotation="#minute*6+#second*0.1"/>
+    <Image src="hand_sec_shadow.png" x="682" y="789" pivotX="215" pivotY="215"
+        rotation="#second*6"/>
+    <Image src="hand_sec.png" x="682" y="784" pivotX="215" pivotY="215"
+        rotation="#second*6"/>
+
+    <!-- pills: battery, next alarm -->
+    <Image src="pill.png" x="342" y="1303"/>
+    <Image src="ic_battery.png" x="376" y="1357" alignV="center"/>
+    <Text x="446" y="1357" alignV="center" color="#FFFFFF" size="42"
+        fontFamily="mipro-medium" format="%d%%" paras="#battery_level"/>
+    <Image src="pill.png" x="625" y="1303"/>
+    <Image src="ic_alarm.png" x="659" y="1357" alignV="center"/>
+    <Text x="729" y="1357" alignV="center" color="#FFFFFF" size="42"
+        fontFamily="mipro-medium" textExp="ifelse(strIsEmpty(@next_alarm_time),'Off',@next_alarm_time)"/>
+
+    <!-- liquid charging orb -->
+    <Group visibility="gt(#charging,0)">
+      <Image src="orb_halo.png" x="610" y="#orb_cy" align="center" alignV="center"/>
+      <!-- frame = level bucket * phases + wave phase; srcid N loads orb_fill_N.png -->
+      <Image src="orb_fill.png" x="610" y="#orb_cy" align="center" alignV="center"
+          srcid="int(#battery_level/10+0.5)*8+int(#time/140)%8"/>
+      <Image src="orb_gloss.png" x="610" y="#orb_cy" align="center" alignV="center"/>
+      <Text x="610" y="#orb_cy-12" align="center" alignV="center" color="#FFFFFF" size="130" fontFamily="mipro-light"
+          format="%d%%" paras="#battery_level" shadowColor="#40000000" shadowDy="3"/>
+      <Text x="610" y="#orb_cy+78" align="center" alignV="center" color="#FFFFFF" size="35" fontFamily="mipro-medium"
+          textExp="ifelse(eq(#battery_state,3),'Fully charged','Charging')"/>
+    </Group>
+
+    <Text x="610" y="#screen_height-268" align="center" alignV="center" color="#E6FFFFFF" size="40"
+        text="Swipe up to unlock"/>
+    <Image src="ic_chevron.png" x="610" y="#screen_height-268-62-abs(sin(#time/450))*10" align="center"
+        alignV="center" alpha="200"/>
+    <Image src="ic_camera.png" x="1021" y="#screen_height-268" align="center" alignV="center"/>
+  </Group>
+
+  <!-- swipe-up gesture over the whole screen -->
+  <Button x="0" y="0" w="#screen_width" h="#screen_height">
+    <Triggers>
+      <Trigger action="down">
+        <VariableCommand name="start_y" expression="#touch_y"/>
+      </Trigger>
+      <Trigger action="move">
+        <VariableCommand name="drag" expression="max(0,#start_y-#touch_y)"/>
+      </Trigger>
+      <Trigger action="up">
+        <ExternCommand command="unlock" condition="ge(#drag,320)"/>
+        <VariableCommand name="drag" expression="0"/>
+      </Trigger>
+      <Trigger action="cancel">
+        <VariableCommand name="drag" expression="0"/>
+      </Trigger>
+    </Triggers>
+  </Button>
+
+  <!-- camera shortcut sits above the gesture layer so it gets the tap -->
+  <Button x="1021-70" y="#screen_height-268-70" w="140" h="140">
+    <Triggers>
+      <Trigger action="up">
+        <IntentCommand action="android.media.action.STILL_IMAGE_CAMERA_SECURE" flags="268435456"/>
+      </Trigger>
+    </Triggers>
+  </Button>
+</Lockscreen>
